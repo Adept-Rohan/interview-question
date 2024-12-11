@@ -25,7 +25,7 @@ function App() {
     // Fetched all the data of items from the backend using axios and populated in items variable
     const fetchData = async () => {
       try {
-        const response = await axios.get<Item[]>("http://localhost:3000/items");
+        const response = await axios.get<Item[]>("http://localhost:4000/items");
         setItems(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -36,10 +36,13 @@ function App() {
 
   // Simple Handle Checkbox Change when user clicks on the checkbox. It populates the array with all the selected checkbox alongside their data. If there is same data it will not insert twice since the filter function will rule it out.
   const handleCheckboxChange = (product: Item) => {
+    console.log("🚀 ~ handleCheckboxChange ~ product:", product)
     setSelectedItems((prev) => {
+      console.log("🚀 ~ setSelectedItems ~ prev:", prev)
       if (prev.some((item) => item.id === product.id)) {
         return prev.filter((item) => item.id !== product.id);
       } else {
+        console.log([...prev, product], 'return ')
         return [...prev, product];
       }
     });
@@ -49,7 +52,7 @@ function App() {
   const placeOrder = async () => {
     try {
       const response = await axios.post<{ packages: Package[] }>(
-        "http://localhost:3000/place-order",
+        "http://localhost:4000/place-order",
         {
           selectedItems,
         }
@@ -66,7 +69,7 @@ function App() {
 
       {/* Rendered all the items with it's specification */}
       <ul className="bg-white shadow-md rounded-lg p-4 w-full max-w-md">
-        {items.map((item) => (
+        {items?.map((item) => (
           <li
             key={item.id}
             className="flex justify-between items-center border-b py-2"
@@ -100,7 +103,7 @@ function App() {
         {packages.length > 0 && (
           <div className="grid grid-cols-4 space-y-4">
             {packages.map((pkg, index) => (
-              <div className="" key={index}>
+              <div key={index}>
                 <h3>Package {index + 1}</h3>
                 <p>
                   Items: {pkg.items.map((item) => item.name).join(", ")}
